@@ -34,14 +34,14 @@ pred initial[s: Board] {
 }
 
 -- red goes first 
-pred redTurn {
+pred redTurn[b : Board] {
     #{row, col: Int | b.board[row][col] = Red} 
     = 
     #{row, col: Int | b.board[row][col] = Yellow} 
 }
 
 -- yellow goes second 
-pred yellowTurn {
+pred yellowTurn[b : Board] {
     #{row, col: Int | b.board[row][col] = Red} 
     = 
     add[#{row, col: Int | b.board[row][col] = Yellow}, 1]
