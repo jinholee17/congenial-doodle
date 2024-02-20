@@ -28,21 +28,39 @@ pred redTurn {
 }
 
 // helper pred
-pred winRow {
+pred winRow[b: Board, p: Player] {
+    some row, col: Int | {
+        b.board[row][col] = p
+        b.board[row][add[col,1]] = p
+        b.board[row][add[col,2]] = p
+        b.board[row][add[col,3]] = p
+    }
 
 }
 
-pred winCol {
-
+pred winCol[b: Board, p: Player] {
+    some row,col: Int | {
+        b.board[row][col] = p
+        b.board[add[row,1]][col] = p
+        b.board[add[row,2]][col] = p
+        b.board[add[row,3]][col] = p
+    }
 }
 
-pred winDiagonal {
-
+pred winDiagonal[b: Board, p: Player] {
+    some row,col,dirY,dirX: Int | {
+        dirY = -1 or dirY = 1
+        dirX = -1 or dirX = 1
+        b.board[row][col] = p
+        b.board[add[row,dirY]][add[col,dirX]] = p
+        b.board[add[row,multiply[2,dirY]]][add[col,multiply[2,dirX]]] = p
+        b.board[add[row,multiply[3,dirY]]][add[col,multiply[3,dirX]]] = p
+    }
 }
 
 // use helper predicates 
-pred anyWin {
-
+pred winner[b: Board, p: Player] {
+    winRow[b, p] or winCol[b, p] or winDiagonal[b, p]
 }
 
 // balance turns 
@@ -105,8 +123,9 @@ pred move[pre: Board,
 } */
 
 run {
-    some b : Board | {
+    some b : Board, p: Player | {
         wellformed[b]
-        initial[b]
+        // initial[b]
+        winner[b,p]
     }
 }
