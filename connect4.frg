@@ -2,10 +2,26 @@
 abstract sig Player {}
 one sig Yellow, Red extends Player {}
 
+/* Concepts we want to include 
+- board,
+- players red and yellow 
+- valid moves 
+- finite amount of board states 
+- win conidtion, tie condition 
+
+constraint: moves can only be stacked or to the side of all-ready occupied 
+board postitions - no floating players in middle of board 
+constraint: can't be put on top of each other 
+constraint: moves alternate 
+constraint: game ends if someone won? 
+ */
+
+
 sig Board {
   board: pfunc Int -> Int -> Player
 }
 
+-- a wellformed board and there has to be 6 rows and 7 columns
 pred wellformed [b: Board] {
     all row, col: Int | {
     (row < 0 or row > 6 or col < 0 or col > 7) 
@@ -14,40 +30,45 @@ pred wellformed [b: Board] {
 }
 
 pred initial[s: Board] {
-    all row, col: Int | 
-        no s.board[row][col]
+    all row, col: Int | no s.board[row][col]
 }
 
-
-pred yellowTurn {
-
-}
-
+-- red goes first 
 pred redTurn {
+    #{row, col: Int | b.board[row][col] = Red} 
+    = 
+    #{row, col: Int | b.board[row][col] = Yellow} 
+}
 
+-- yellow goes second 
+pred yellowTurn {
+    #{row, col: Int | b.board[row][col] = Red} 
+    = 
+    add[#{row, col: Int | b.board[row][col] = Yellow}, 1]
 }
 
 // helper pred
 pred winRow {
-
+    some 
 }
 
 pred winCol {
 
 }
 
+
 pred winDiagonal {
 
 }
 
 // use helper predicates 
-pred anyWin {
+pred anyWin[b : Board, p: Player] {
 
 }
 
 // balance turns 
 pred balanced[s: Board] {
-  yellowTurn[s] or redTurn[s]
+  redTurn[s] or yellowTurn[s]
 }
 
 // make sure the turns are not in the middle and are stacked on one another 
