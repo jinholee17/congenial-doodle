@@ -24,11 +24,12 @@ sig Board {
 -- a wellformed board and there has to be 6 rows and 7 columns
 pred wellformed [b: Board] {
     all row, col: Int | {
-    (row < 0 or row > 6 or col < 0 or col > 7) 
-        implies no b.board[row][col]      
+    (row < 0 or row > 6 or col < 0 or col > 7) implies
+        no b.board[row][col]      
     }
 }
 
+// initial board 
 pred initial[s: Board] {
     all row, col: Int | no s.board[row][col]
 }
@@ -90,8 +91,32 @@ pred balanced[s: Board] {
 
 // make sure the turns are not in the middle and are stacked on one another 
 pred validMovetoBottom {
+    
+}
+
+pred move[pre: Board, row: Int, col: Int, turn: Player, post: Board] {
+    -- guard 
+    no pre.board[row, col]
+    turn = Yellow implies yellowTurn[pre]
+    turn = Red implies redTurn[pre]
+
+    // can we call wellformed instead ? 
+    row >= 0 
+    row <= 6 
+    col >= 0
+    col <= 7
+    -- balance the game 
+    
+    // mark location on board 
+    post.board[row][col] = turn
+    // check for winner 
+    all row2, col2 :Int | (row != row2 or col != col2) implies {
+        post.board[row2][col2] = pre.board[row2][col2]
+    } 
 
 }
+
+
 
 // something similar 
 /* one sig Game {
@@ -109,43 +134,18 @@ pred game_trace {
 run { game_trace } for 10 Board for {next is linear}
 // ^ the annotation is faster than the constraint */
 
-/// Feb 5 ///
-
-/* -- "transition relation"
-pred move[pre: Board, 
-          row, col: Int, 
-          turn: Player, 
-          post: Board] {
-    -- guard: conditions necessary to make a move  
-    -- cant move somewhere with an existing mark
-    -- valid move location
-    -- it needs to be the player's turn 
-    no pre.board[row][col]
-    turn = X implies xturn[pre]
-    turn = O implies oturn[pre]
-
-    -- balanced game
-    -- game hasn't been won yet
-    -- if it's a tie can't move 
-    -- board needs to be well-formed 
-
-    -- action: effects of making a move
-
-    -- mark the location with the player 
-    post.board[row][col] = turn 
-    -- updating the board; check for winner or tie 
-    -- other squares stay the same  ("frame condition")
-    all row2: Int, col2: Int | (row!=row2 or col!=col2) implies {
-        post.board[row2][col2] = pre.board[row2][col2]
-    }
-
-
-} */
-
-run {
+/* run {
     some b : Board, p: Player | {
         wellformed[b]
         // initial[b]
         winner[b,p]
+    }
+} */
+
+run {
+    some pre, post: Board | {
+        some row, col: Int, p: Player | 
+            wellformed[pre]
+            move[pre, row, col, p, post]
     }
 }
