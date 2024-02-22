@@ -88,6 +88,18 @@ pred winner[b: Board, p: Player] {
     winRow[b, p] or winCol[b, p] or winDiagonal[b, p]
 }
 
+//not a winner
+pred notWinner[b: Board, p: Player] {
+    not (winRow[b, p] and winCol[b, p] and winDiagonal[b, p])
+}
+
+// one winner implies no other winners
+pred oneWinner[b: Board, p1,p2: Player] {
+    (winner[b,p1]) implies{
+        notWinner[b,p2]        
+    }
+}
+
 
 // balance turns 
 pred balanced[s: Board] {
