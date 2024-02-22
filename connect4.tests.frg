@@ -31,10 +31,19 @@ pred notRedTurn[b: Board] {
 
 test suite for redTurn {
     test expect{
-        hi:{
+        balancedRed:{
             all b: Board |{
+                balanced[b]
                 notYellowTurn[b] implies{
                 redTurn[b]
+                }
+            }
+        } is sat
+        unbalancedRed:{
+            all b: Board |{
+                not balanced[b] implies{
+                    notRedTurn[b]
+                    redTurn[b]
                 }
             }
         } is sat
@@ -44,8 +53,17 @@ test suite for yellowTurn {
     test expect{
         yellowWorks:{
             all b: Board |{
+                balanced[b]
                 notRedTurn[b] implies{
                 yellowTurn[b]
+                }
+            }
+        } is sat
+        unbalancedYellow:{
+            all b: Board |{
+                not balanced[b] implies{
+                    notYellowTurn[b]
+                    yellowTurn[b]
                 }
             }
         } is sat
