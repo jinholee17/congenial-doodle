@@ -67,7 +67,6 @@ pred winCol[b: Board, p: Player] {
     }
 }
 
-
 pred winDiagonal[b: Board, p: Player] {
     some row,col,dirY,dirX: Int | {
         dirY = -1 or dirY = 1
@@ -84,14 +83,19 @@ pred winner[b: Board, p: Player] {
     winRow[b, p] or winCol[b, p] or winDiagonal[b, p]
 }
 
+
 // balance turns 
 pred balanced[s: Board] {
   redTurn[s] or yellowTurn[s]
 }
 
 // make sure the turns are not in the middle and are stacked on one another 
-pred validMovetoBottom {
-    
+pred validRowPosition[b: Board, row: Int, col: Int, p: Player] {
+    some otherp : Player | {
+        b.board[row][col] = p implies {// for a valid player position 
+            (b.board[subtract[row, 1]][col] = otherp) or (subtract[row, 1] = -1)
+        } // there must be another player (token) beneath the player position or it can be at the bottom row
+    }
 }
 
 pred move[pre: Board, row: Int, col: Int, turn: Player, post: Board] {
@@ -100,15 +104,16 @@ pred move[pre: Board, row: Int, col: Int, turn: Player, post: Board] {
     turn = Yellow implies yellowTurn[pre]
     turn = Red implies redTurn[pre]
 
-    // can we call wellformed instead ? 
-    row >= 0 
-    row <= 6 
+    row >= 0
+    row <= 5
     col >= 0
-    col <= 7
+    col <= 6
     -- balance the game 
     
     // mark location on board 
     post.board[row][col] = turn
+    validRowPosition[post, row, col, turn]
+
     // check for winner 
     all row2, col2 :Int | (row != row2 or col != col2) implies {
         post.board[row2][col2] = pre.board[row2][col2]
@@ -116,36 +121,36 @@ pred move[pre: Board, row: Int, col: Int, turn: Player, post: Board] {
 
 }
 
-
-
-// something similar 
-/* one sig Game {
+one sig Game {
     first: one Board, 
     next: pfunc Board -> Board
 }
+
+// the number of players in the next board (game) is the same as the current board 
+pred doNothing[b: Board] {
+    // how to count the number of players 
+    // 
+    Game.next[b] = b
+}
+
 pred game_trace {
     initial[Game.first]
     all b: Board | { some Game.next[b] implies {
         some row, col: Int, p: Player | 
             move[b, row, col, p, Game.next[b]]
-        -- TODO: ensure X moves first
-    }}
+            // once we have a winning state, then we do nothing 
+/*             winner[b, p] implies {
+                doNothing[b] 
+            } */
+        }
+    }
 }
-run { game_trace } for 10 Board for {next is linear}
-// ^ the annotation is faster than the constraint */
+run { game_trace } for 20 Board for {next is linear}
 
+-- make sure our board is wellformed 
 /* run {
-    some b : Board, p: Player | {
-        wellformed[b]
-        // initial[b]
-        winner[b,p]
-    }
-} */
-
-run {
     some pre, post: Board | {
-        some row, col: Int, p: Player | 
+        some r, c: Int, p: Player | 
             wellformed[pre]
-            move[pre, row, col, p, post]
     }
-}
+} for 1 Board */
