@@ -21,6 +21,11 @@ sig Board {
   board: pfunc Int -> Int -> Player
 }
 
+one sig Game {
+    first: one Board, 
+    next: pfunc Board -> Board
+}
+
 -- a wellformed board and there has to be 6 rows and 7 columns
 pred wellformed [b: Board] {
     all row, col: Int | {
@@ -121,14 +126,9 @@ pred move[pre: Board, row: Int, col: Int, turn: Player, post: Board] {
 
 }
 
-one sig Game {
-    first: one Board, 
-    next: pfunc Board -> Board
-}
-
 // the number of players in the next board (game) is the same as the current board 
 pred doNothing[b: Board] {
-    // how to count the number of players 
+    // the next board in the game is the current board 
     // 
     Game.next[b] = b
 }
@@ -136,16 +136,17 @@ pred doNothing[b: Board] {
 pred game_trace {
     initial[Game.first]
     all b: Board | { some Game.next[b] implies {
-        some row, col: Int, p: Player | 
+        some row, col: Int, p: Player | {
             move[b, row, col, p, Game.next[b]]
             // once we have a winning state, then we do nothing 
+            // TAKES FOREVER TO RUN 
 /*             winner[b, p] implies {
                 doNothing[b] 
-            } */
+            } */ 
         }
-    }
+    }}
 }
-run { game_trace } for 20 Board for {next is linear}
+run { game_trace } for 2 Board for {next is linear}
 
 -- make sure our board is wellformed 
 /* run {
