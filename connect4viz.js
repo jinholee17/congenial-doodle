@@ -36,13 +36,13 @@ function printState(stateAtom, yoffset) {
       .append('line') 
       .attr('x1', 5) 
       .attr('y1', yoffset + r * (cellSize + gapSize)) 
-      .attr('x2', (numCols * cellSize) + 5) 
+      .attr('x2', ((numCols+1) * cellSize) + 5) 
       .attr('y2', yoffset + r * (cellSize + gapSize)) 
       .attr('stroke', 'black'); 
   } 
  
   // Draw vertical grid lines 
-  for (let c = 0; c < numCols; c++) { 
+  for (let c = 0; c <= numCols; c++) { 
     d3.select(svg) 
       .append('line') 
       .attr('x1', c * (cellSize + gapSize) + 5) 
