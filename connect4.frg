@@ -7,7 +7,7 @@ one sig Yellow, Red extends Player {}
 - players red and yellow 
 - valid moves 
 - finite amount of board states 
-- win conidtion, tie condition 
+- win condition, tie condition 
 
 constraint: moves can only be stacked or to the side of all-ready occupied 
 board postitions - no floating players in middle of board 
@@ -146,6 +146,7 @@ pred game_trace {
         }
     }}
 }
+option run_sterling "connect4viz.js"
 run { game_trace } for 2 Board for {next is linear}
 
 -- make sure our board is wellformed 
