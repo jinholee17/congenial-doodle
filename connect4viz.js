@@ -37,7 +37,7 @@ function printState(stateAtom, yoffset) {
       .attr('y1', yoffset + (numRows - r) * (cellSize + gapSize)) // Adjusted y-coordinate
       .attr('x2', ((numCols + 1) * cellSize) + 5)
       .attr('y2', yoffset + (numRows - r) * (cellSize + gapSize)) // Adjusted y-coordinate
-      .attr('stroke', 'black');
+      .attr('stroke', 'blue');
   }
 
   // Draw vertical grid lines
@@ -48,7 +48,7 @@ function printState(stateAtom, yoffset) {
       .attr('y1', yoffset)
       .attr('x2', c * (cellSize + gapSize) + 5)
       .attr('y2', yoffset + numRows * (cellSize + gapSize))
-      .attr('stroke', 'black');
+      .attr('stroke', 'blue');
   }
 }
 
